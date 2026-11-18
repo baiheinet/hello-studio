@@ -1,0 +1,16 @@
+{
+  "name": "hello-studio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Enter a Studio invite code and open its invitation link in the browser",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node scripts/serve.mjs",
+    "cli": "node bin/cli.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "build": "node scripts/build.mjs"
+  }
+}
