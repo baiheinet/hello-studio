@@ -175,8 +175,8 @@
           return;
         }
 
-        // Valid code: open the invite link in a new browser tab.
-        window.open(url, '_blank', 'noopener');
+        // Valid code: open the invite link in this same window/tab.
+        window.location.href = url;
 
         const link = document.createElement('a');
         link.href = url;

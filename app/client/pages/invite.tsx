@@ -31,8 +31,8 @@ export default function InvitePage(): ReactElement {
       return;
     }
 
-    // Valid input: open the invitation link in a new browser tab.
-    window.open(url, '_blank', 'noopener');
+    // Valid input: open the invitation link in this same window/tab.
+    window.location.href = url;
     setOpenedUrl(url);
   }
 
