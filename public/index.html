@@ -8,81 +8,152 @@
       :root {
         color-scheme: light dark;
         font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+        --background: #f5f6f8;
+        --card: #ffffff;
+        --foreground: #1f2329;
+        --muted: #6b7280;
+        --border: #e5e7eb;
+        --input: #d1d5db;
+        --primary: #1677ff;
+        --destructive-bg: #fff1f0;
+        --destructive: #cf1322;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --background: #14161a;
+          --card: #2b2f36;
+          --foreground: #f5f6f8;
+          --muted: #9ca3af;
+          --border: #3f434b;
+          --input: #4b5563;
+          --destructive-bg: rgba(207, 19, 34, 0.12);
+          --destructive: #ff7875;
+        }
       }
       body {
         margin: 0;
         min-height: 100vh;
-        display: grid;
-        place-items: center;
-        background: #f5f6f8;
-        color: #1f2329;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        background: var(--background);
+        color: var(--foreground);
       }
-      @media (prefers-color-scheme: dark) {
-        body { background: #1f2329; color: #f5f6f8; }
-      }
-      main {
-        width: min(92vw, 460px);
-        padding: 2rem;
-        border-radius: 14px;
-        background: #fff;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-      }
-      @media (prefers-color-scheme: dark) {
-        main { background: #2b2f36; box-shadow: none; }
-      }
-      h1 { font-size: 1.4rem; margin: 0 0 0.5rem; }
-      p.hint { margin: 0 0 1.5rem; opacity: 0.75; line-height: 1.6; }
-      label { display: block; font-size: 0.9rem; margin-bottom: 0.4rem; }
-      input {
+      .card {
         width: 100%;
+        max-width: 24rem;
         box-sizing: border-box;
-        padding: 0.7rem 0.8rem;
-        font-size: 1rem;
-        border: 1px solid #c9cdd4;
-        border-radius: 8px;
+        padding: 1.5rem;
+        border: 1px solid var(--border);
+        border-radius: 0.75rem;
+        background: var(--card);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      }
+      header {
+        display: grid;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+      }
+      h1 {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+      .description {
+        margin: 0;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        color: var(--muted);
+      }
+      form {
+        display: grid;
+        gap: 1.25rem;
+      }
+      .field {
+        display: grid;
+        gap: 0.5rem;
+      }
+      label {
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+      input {
+        box-sizing: border-box;
+        width: 100%;
+        height: 2rem;
+        padding: 0 0.625rem;
+        font-size: 0.875rem;
+        color: var(--foreground);
+        background: transparent;
+        border: 1px solid var(--input);
+        border-radius: 0.5rem;
+        outline: none;
+      }
+      input:focus {
+        border-color: var(--primary);
       }
       button {
-        margin-top: 1rem;
         width: 100%;
-        padding: 0.75rem;
-        font-size: 1rem;
+        height: 2rem;
+        font-size: 0.875rem;
+        font-weight: 500;
         color: #fff;
-        background: #1677ff;
+        background: var(--primary);
         border: 0;
-        border-radius: 8px;
+        border-radius: 0.5rem;
         cursor: pointer;
       }
-      button:hover { background: #0958d9; }
-      .message { margin-top: 1rem; line-height: 1.6; word-break: break-all; }
-      .message:empty { display: none; }
-      .error { color: #d4380d; }
-      .success { color: #389e0d; }
-      a { color: #1677ff; }
-      code { font-size: 0.85em; }
+      button:hover {
+        filter: brightness(0.94);
+      }
+      .message {
+        font-size: 0.875rem;
+        line-height: 1.5;
+        word-break: break-all;
+      }
+      .message:empty {
+        display: none;
+      }
+      .error {
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.5rem;
+        background: var(--destructive-bg);
+        color: var(--destructive);
+      }
+      .success {
+        color: var(--muted);
+      }
+      a {
+        color: var(--primary);
+        text-underline-offset: 4px;
+      }
     </style>
   </head>
   <body>
-    <main>
-      <h1>打开 Studio 邀请链接</h1>
-      <p class="hint">
-        输入邀请码后，程序会校验它并自动在浏览器中打开对应的 Studio 邀请链接。
-      </p>
+    <div class="card">
+      <header>
+        <h1>打开 Studio 邀请链接</h1>
+        <p class="description">输入 Studio 邀请码，程序会自动在浏览器中打开对应的邀请链接。</p>
+      </header>
       <form id="invite-form" novalidate>
-        <label for="code">邀请码</label>
-        <input
-          id="code"
-          name="code"
-          type="text"
-          autocomplete="off"
-          spellcheck="false"
-          placeholder="例如：G-AG8p4FpnpAu83F_vJ1ND0aJ"
-          data-testid="code-input"
-        />
+        <div class="field">
+          <label for="code">邀请码</label>
+          <input
+            id="code"
+            name="code"
+            type="text"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="例如：G-AG8p4FpnpAu83F_vJ1ND0aJ"
+            data-testid="code-input"
+          />
+        </div>
+        <p id="error" class="message error" role="alert" data-testid="error"></p>
+        <p id="success" class="message success" data-testid="success"></p>
         <button type="submit" data-testid="submit-button">打开邀请链接</button>
       </form>
-      <div id="error" class="message error" role="alert" data-testid="error"></div>
-      <div id="success" class="message success" data-testid="success"></div>
-    </main>
+    </div>
 
     <script type="module">
       import { buildInviteUrl, validateInviteCode } from './invite.js';
