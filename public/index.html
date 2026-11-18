@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>打开 Studio 邀请链接</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+        --background: #f5f6f8;
+        --card: #ffffff;
+        --foreground: #1f2329;
+        --muted: #6b7280;
+        --border: #e5e7eb;
+        --input: #d1d5db;
+        --primary: #1677ff;
+        --destructive-bg: #fff1f0;
+        --destructive: #cf1322;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --background: #14161a;
+          --card: #2b2f36;
+          --foreground: #f5f6f8;
+          --muted: #9ca3af;
+          --border: #3f434b;
+          --input: #4b5563;
+          --destructive-bg: rgba(207, 19, 34, 0.12);
+          --destructive: #ff7875;
+        }
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        background: var(--background);
+        color: var(--foreground);
+      }
+      .card {
+        width: 100%;
+        max-width: 24rem;
+        box-sizing: border-box;
+        padding: 1.5rem;
+        border: 1px solid var(--border);
+        border-radius: 0.75rem;
+        background: var(--card);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      }
+      header {
+        display: grid;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+      }
+      h1 {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+      .description {
+        margin: 0;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        color: var(--muted);
+      }
+      form {
+        display: grid;
+        gap: 1.25rem;
+      }
+      .field {
+        display: grid;
+        gap: 0.5rem;
+      }
+      label {
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+      input {
+        box-sizing: border-box;
+        width: 100%;
+        height: 2rem;
+        padding: 0 0.625rem;
+        font-size: 0.875rem;
+        color: var(--foreground);
+        background: transparent;
+        border: 1px solid var(--input);
+        border-radius: 0.5rem;
+        outline: none;
+      }
+      input:focus {
+        border-color: var(--primary);
+      }
+      button {
+        width: 100%;
+        height: 2rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #fff;
+        background: var(--primary);
+        border: 0;
+        border-radius: 0.5rem;
+        cursor: pointer;
+      }
+      button:hover {
+        filter: brightness(0.94);
+      }
+      .message {
+        font-size: 0.875rem;
+        line-height: 1.5;
+        word-break: break-all;
+      }
+      .message:empty {
+        display: none;
+      }
+      .error {
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.5rem;
+        background: var(--destructive-bg);
+        color: var(--destructive);
+      }
+      .success {
+        color: var(--muted);
+      }
+      a {
+        color: var(--primary);
+        text-underline-offset: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <header>
+        <h1>打开 Studio 邀请链接</h1>
+        <p class="description">输入 Studio 邀请码，程序会自动在浏览器中打开对应的邀请链接。</p>
+      </header>
+      <form id="invite-form" novalidate>
+        <div class="field">
+          <label for="code">邀请码</label>
+          <input
+            id="code"
+            name="code"
+            type="text"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="例如：G-AG8p4FpnpAu83F_vJ1ND0aJ"
+            data-testid="code-input"
+          />
+        </div>
+        <p id="error" class="message error" role="alert" data-testid="error"></p>
+        <p id="success" class="message success" data-testid="success"></p>
+        <button type="submit" data-testid="submit-button">打开邀请链接</button>
+      </form>
+    </div>
+
+    <script type="module">
+      import { buildInviteUrl, validateInviteCode } from './invite.js';
+
+      const form = document.getElementById('invite-form');
+      const input = document.getElementById('code');
+      const errorBox = document.getElementById('error');
+      const successBox = document.getElementById('success');
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        errorBox.textContent = '';
+        successBox.textContent = '';
+
+        const url = buildInviteUrl(input.value);
+        if (url === null) {
+          // Empty code: show a clear error and open nothing.
+          errorBox.textContent = validateInviteCode(input.value).message;
+          return;
+        }
+
+        // Non-empty code: open the invite link in this same window/tab.
+        window.location.href = url;
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.textContent = url;
+        link.rel = 'noopener';
+        successBox.append('已尝试打开链接：', link);
+      });
+    </script>
+  </body>
+</html>
