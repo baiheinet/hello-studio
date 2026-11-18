@@ -12,8 +12,11 @@ await mkdir(dist, { recursive: true });
 
 await cp(join(root, 'public/index.html'), join(dist, 'index.html'));
 await cp(join(root, 'src/invite.js'), join(dist, 'invite.js'));
+await cp(join(root, 'package.json'), join(dist, 'package.json'));
 
 await rm(archive, { force: true });
-execFileSync('tar', ['-czf', archive, '-C', dist, '.'], { stdio: 'inherit' });
+// Keep dist/ as a directory in the archive; the deployment validator expects
+// either a root package.json or a dist/package.json.
+execFileSync('tar', ['-czf', archive, '-C', root, 'dist'], { stdio: 'inherit' });
 
 console.log(`Built ${archive}`);
