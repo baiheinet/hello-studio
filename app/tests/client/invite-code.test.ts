@@ -30,20 +30,11 @@ describe('invite codes', () => {
     }
   });
 
-  it('rejects input without invite-code characteristics', () => {
-    const invalid = [
-      'hello',
-      'G-',
-      'G-abc',
-      'https://evil.example/invite',
-      'javascript:alert(1)',
-      `${VALID}!`,
-      `g-${VALID.slice(2)}`,
-      `G-${'a'.repeat(65)}`,
-    ];
-    for (const input of invalid) {
-      expect(validateInviteCode(input).error).toBe('INVITE_CODE_INVALID');
-      expect(buildInviteUrl(input)).toBeNull();
+  it('builds a URL for any non-empty input without a format check', () => {
+    const inputs = ['hello', 'G-', 'https://evil.example/invite', `${VALID}!`, `g-${VALID.slice(2)}`];
+    for (const input of inputs) {
+      expect(validateInviteCode(input).ok).toBe(true);
+      expect(buildInviteUrl(input)).toBe(INVITE_BASE_URL + encodeURIComponent(input));
     }
   });
 });

@@ -6,8 +6,8 @@ accounts or persistence — everything runs locally.
 
 ## Invite codes
 
-A valid invite code starts with `G-` followed by 8–64 letters, digits,
-underscores (`_`) or hyphens (`-`). For example:
+Any non-empty input is accepted as an invite code — there is no format check.
+For example:
 
 ```
 G-AG8p4FpnpAu83F_vJ1ND0aJ
@@ -19,8 +19,8 @@ It becomes:
 https://studio.seg.plus/main/invite/G-AG8p4FpnpAu83F_vJ1ND0aJ
 ```
 
-Empty input, or text that does not look like an invite code, produces a clear
-error and opens nothing.
+The input is percent-encoded so arbitrary characters stay a single, safe URL
+path segment. Empty input produces a clear error and opens nothing.
 
 ## Run it
 
@@ -32,8 +32,8 @@ pnpm start
 ```
 
 Open <http://localhost:3000/>, type an invite code and press **打开邀请链接**.
-When the code is valid, the browser opens the invitation link in a new tab.
-When it is empty or malformed, an error is shown and no link is opened.
+Any non-empty code navigates the browser to the invitation link in this same
+tab. When the input is empty, an error is shown and no link is opened.
 
 ### Command line
 
@@ -52,12 +52,12 @@ pnpm test    # unit + CLI smoke tests
 pnpm build   # writes dist/ and dist.tar.gz
 ```
 
-Tests cover the three required cases: a valid code opens the exact URL, empty
-and malformed input only report an error, and the program never crashes.
+Tests cover the required cases: non-empty input opens the exact URL, empty
+input only reports an error, and the program never crashes.
 
 ## Project layout
 
-- `src/invite.js` — pure validation and URL building, shared everywhere.
+- `src/invite.js` — input normalization and URL building, shared everywhere.
 - `src/open-browser.js` — browser-opening wrapper with an injectable opener.
 - `bin/cli.mjs` — command-line entry point.
 - `public/index.html` — the browser UI.

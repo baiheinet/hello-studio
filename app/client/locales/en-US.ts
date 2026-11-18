@@ -12,12 +12,10 @@ const enUS = {
   invite: {
     action: 'Open invite link',
     description: 'Enter a Studio invite code and its invitation link opens in your browser.',
-    errorInvalid:
-      'That invite code is not valid. It must start with G- followed by 8-64 letters, digits, underscores or hyphens.',
     errorRequired: 'Please enter an invite code.',
     label: 'Invite code',
     placeholder: 'e.g. G-AG8p4FpnpAu83F_vJ1ND0aJ',
-    success: 'Invite code accepted. Opened:',
+    success: 'Opened the invite link:',
     title: 'Open a Studio invite link',
   },
   // The application's copy goes here, one group per feature. A shared group such as `navigation` is extended by

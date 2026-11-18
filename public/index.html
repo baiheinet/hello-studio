@@ -170,19 +170,19 @@
 
         const url = buildInviteUrl(input.value);
         if (url === null) {
-          // Invalid or empty code: show a clear error and open nothing.
+          // Empty code: show a clear error and open nothing.
           errorBox.textContent = validateInviteCode(input.value).message;
           return;
         }
 
-        // Valid code: open the invite link in this same window/tab.
+        // Non-empty code: open the invite link in this same window/tab.
         window.location.href = url;
 
         const link = document.createElement('a');
         link.href = url;
         link.textContent = url;
         link.rel = 'noopener';
-        successBox.append('邀请码有效，已尝试打开链接：', link);
+        successBox.append('已尝试打开链接：', link);
       });
     </script>
   </body>

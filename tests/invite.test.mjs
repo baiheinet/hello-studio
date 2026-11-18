@@ -43,22 +43,20 @@ test('empty or whitespace-only input is rejected', () => {
   }
 });
 
-test('input without invite-code characteristics is rejected', () => {
-  const invalid = [
+test('any non-empty input builds a URL without a format check', () => {
+  const inputs = [
     'hello',
     'G-',
-    'G-abc',
     'https://evil.example/invite',
-    'javascript:alert(1)',
+    'hello world',
     'G-AG8p4FpnpAu83F_vJ1ND0aJ!',
     'g-AG8p4FpnpAu83F_vJ1ND0aJ',
-    'G-' + 'a'.repeat(65),
   ];
-  for (const input of invalid) {
+  for (const input of inputs) {
     const result = validateInviteCode(input);
-    assert.equal(result.ok, false, `expected invalid: ${input}`);
-    assert.equal(result.error, 'INVITE_CODE_INVALID');
-    assert.equal(buildInviteUrl(input), null, `expected no URL: ${input}`);
+    assert.equal(result.ok, true, `expected accepted: ${input}`);
+    assert.equal(result.error, undefined);
+    assert.equal(buildInviteUrl(input), INVITE_BASE_URL + encodeURIComponent(input));
   }
 });
 
@@ -72,8 +70,8 @@ test('a valid code opens exactly the built URL', () => {
   assert.deepEqual(calls, [VALID_URL]);
 });
 
-test('empty and invalid input never open a link', () => {
-  for (const input of ['', '  ', 'hello', 'G-']) {
+test('empty input never opens a link', () => {
+  for (const input of ['', '  ', '\n\t']) {
     const { calls, opener } = recordingOpener();
     const result = openInvite(input, opener);
 
@@ -107,11 +105,11 @@ function runCli(...args) {
   };
 }
 
-test('the CLI reports an error and opens nothing for invalid input', () => {
-  const result = runCli('not-a-code');
+test('the CLI reports an error and opens nothing for empty input', () => {
+  const result = runCli('');
   assert.equal(result.signal, null);
   assert.equal(result.status, 1);
-  assert.match(result.output, /邀请码格式不正确/);
+  assert.match(result.output, /请输入邀请码/);
 });
 
 test('the CLI accepts a valid code without crashing', () => {

@@ -4,7 +4,7 @@ import { useState, type FormEvent, type ReactElement } from 'react';
 import { Button } from '#components/ui/button';
 import { Input } from '#components/ui/input';
 import { Label } from '#components/ui/label';
-import { buildInviteUrl, validateInviteCode } from '#lib/invite-code';
+import { buildInviteUrl } from '#lib/invite-code';
 
 /**
  * `/invite`: a standalone page that turns an invite code into a Studio
@@ -25,13 +25,12 @@ export default function InvitePage(): ReactElement {
 
     const url = buildInviteUrl(code);
     if (url === null) {
-      // Empty or malformed input: report the problem and open nothing.
-      const reason = validateInviteCode(code).error;
-      setError(t(reason === 'INVITE_CODE_REQUIRED' ? 'invite.errorRequired' : 'invite.errorInvalid'));
+      // Empty input: report the problem and open nothing.
+      setError(t('invite.errorRequired'));
       return;
     }
 
-    // Valid input: open the invitation link in this same window/tab.
+    // Non-empty input: open the invitation link in this same window/tab.
     window.location.href = url;
     setOpenedUrl(url);
   }
