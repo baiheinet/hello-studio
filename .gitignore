@@ -1,0 +1,26 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+.vscode/
+*.swp
+
+# Logs
+*.log
+logs/
+
+# Dependencies and build output
+node_modules/
+dist/
+build/
+coverage/
+
+# Environment and local configuration
+.env
+.env.local
+*.local
+
+# NocoBase Studio runner credentials and local state
+.nb-studio/run.json
