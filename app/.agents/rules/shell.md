@@ -18,6 +18,8 @@ The header carries no Settings or Inbox entry, and there is no separate settings
 
 `client/lib/navigation-transform.ts` is the application-owned hook for customizing the permission-filtered navigation tree. The shared sidebar supports static section labels with direct links as well as collapsible groups.
 
+This application does not list NocoBase pages in the shell. The invitation page is the root route (`/`) and the only visible entry; its route, and the workbench now at `/home`, declare no `navigation`, and `transformNavigation` removes the System settings group from the menu. Keep the group route and its `navigation` metadata: the settings home builds its module cards from the organized tree, and administrators open `/settings` and the other pages by address. Do not add menu entries back when changing routes.
+
 Navigation groups retain their expanded or collapsed state while the navigation tree stays mounted. Selecting a new page expands its ancestor groups without collapsing other groups; users can still collapse the active group manually.
 
 ## Account menu and session

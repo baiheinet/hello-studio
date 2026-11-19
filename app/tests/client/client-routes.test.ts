@@ -162,6 +162,20 @@ describe('app client routes', () => {
     );
   });
 
+  it('opens on the invitation page and lists no NocoBase page in the menu', () => {
+    const routes = resolveRoutes().routes;
+    const invite = routeNamed(routes, 'invite');
+    expect(invite).toMatchObject({ path: '/', auth: 'optional' });
+    expect(invite).not.toHaveProperty('navigation');
+    // The workbench stays reachable by address for administrators, without an entry of its own.
+    expect(routeNamed(routes, 'home')).toMatchObject({ path: '/home' });
+    expect(routeNamed(routes, 'home')).not.toHaveProperty('navigation');
+    // System settings keeps its routes, so an administrator who opens /settings reaches the module cards.
+    expect(pagePaths(routes)).toEqual(
+      expect.arrayContaining(['/settings', '/settings/database-explorer']),
+    );
+  });
+
   it('loads every page component', async () => {
     const resolved = resolveRoutes();
     const loaders = componentLoadersIn(resolved.routes);
@@ -261,6 +275,19 @@ function resolveRoutes() {
       source: 'application',
     },
   ]);
+}
+
+/** The route with this name, at any depth. */
+function routeNamed(
+  routes: readonly AppClientRegisteredRoute[],
+  name: string,
+): AppClientRegisteredRoute {
+  for (const route of routes) {
+    if (route.name === name) return route;
+    const nested = routeNamed(route.children ?? [], name);
+    if (nested) return nested;
+  }
+  return undefined as unknown as AppClientRegisteredRoute;
 }
 
 /**

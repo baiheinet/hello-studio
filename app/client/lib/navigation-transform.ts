@@ -26,39 +26,21 @@ export function organizeNavigation(
   );
 }
 
-/** Application-owned navigation customization, applied after permission filtering. */
+/**
+ * Application-owned navigation customization, applied after permission filtering.
+ *
+ * This application exposes the invitation page as its only visible entry, so the shell lists no NocoBase pages. The
+ * System settings group is the one entry that would otherwise remain even when no application page declares
+ * navigation, so it is removed here rather than by taking `navigation` off its route: the settings home builds its
+ * module cards from the organized tree (`buildSettingsCatalog`), and dropping the group route itself would empty them.
+ * Administrators still open `/settings` (and the other NocoBase pages) by address.
+ */
 export function transformNavigation(
   items: RouteNavigationItem[],
   routes: readonly AppClientRegisteredRoute[],
 ): RouteNavigationItem[] {
-  const organized = organizeNavigation(items, routes);
-  const hasGuide = organized.some(
-    (item) =>
-      item.route.name === SETTINGS_GROUP &&
-      item.children.some(
-        (child) =>
-          child.route.packageName === '@nocobase/app-plugin-foundation' &&
-          child.route.name === 'capabilityGuide',
-      ),
-  );
-  return collapseSettingsNavigation(organized).map((item) =>
-    hasGuide && item.route.name === SETTINGS_HOME
-      ? {
-          ...item,
-          activeRouteKeys: [
-            ...(item.activeRouteKeys ?? []),
-            ...routes
-              .filter(
-                (route) =>
-                  route.packageName === '@nocobase/app-plugin-foundation' &&
-                  ['capabilityGuide', 'capabilityGuideEntry'].includes(
-                    route.name,
-                  ),
-              )
-              .map((route) => `${route.packageName}:${route.path}:${route.id}`),
-          ],
-        }
-      : item,
+  return organizeNavigation(items, routes).filter(
+    (item) => !settingsHomeRoute(item.route),
   );
 }
 

@@ -2,7 +2,6 @@ import databaseExplorerRoutes from './pages/settings/database-explorer/routes.js
 import { createAppClientConfig } from '@nocobase/app-client';
 import { readAppClientRuntimeConfig } from '@nocobase/app-client/runtime';
 import { includeNotificationTemplateRoutes } from './pages/settings/notification-routes.js';
-import { ExternalLink, Home } from 'lucide-react';
 import settingsShellRoutes from './pages/settings/shell-routes.js';
 import {
   defineAppRoutes,
@@ -11,14 +10,22 @@ import {
 
 const appRoutes: AppClientRouteContribution = defineAppRoutes([
   {
-    // Every signed-in user reaches the landing page. `authz: 'skip'` takes it out of page authorization entirely, so
-    // no permission change can leave a user signed in with nowhere to land.
+    // Public entry point: a pasted invite code becomes a Studio invitation link. It needs no account, so the
+    // application opens on it without signing in.
+    auth: 'optional',
+    authz: 'skip',
+    componentLoader: () => import('./pages/invite.js'),
+    name: 'invite',
+    path: '/',
+  },
+  {
+    // The template's workbench stays reachable at its own address for administrators, but declares no navigation:
+    // the application shows no NocoBase menu entries. `authz: 'skip'` takes it out of page authorization entirely.
     authz: 'skip',
     auth: 'required',
     componentLoader: () => import('./pages/home/index.js'),
     name: 'home',
-    navigation: { title: 'navigation.home', icon: Home },
-    path: '/',
+    path: '/home',
   },
   {
     // Declares no navigation, so the application decides where its entry goes (for example a sidebar item with an
@@ -29,16 +36,6 @@ const appRoutes: AppClientRouteContribution = defineAppRoutes([
     componentLoader: () => import('./pages/inbox.js'),
     name: 'inbox',
     path: '/inbox',
-  },
-  {
-    // Public tool: a pasted invite code becomes a Studio invitation link. It
-    // needs no account, so the preview can use it without signing in.
-    auth: 'optional',
-    authz: 'skip',
-    componentLoader: () => import('./pages/invite.js'),
-    name: 'invite',
-    navigation: { title: 'navigation.invite', icon: ExternalLink },
-    path: '/invite',
   },
   {
     auth: 'guest',
