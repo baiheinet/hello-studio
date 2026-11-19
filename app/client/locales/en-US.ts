@@ -11,7 +11,7 @@ const enUS = {
   navigation: { ...systemEnUS.navigation, invite: 'Open invite link' },
   invite: {
     action: 'Open invite link',
-    description: 'Enter a Studio invite code and its invitation link opens in your browser.',
+    description: 'Enter a Studio invite code and use it now.',
     errorRequired: 'Please enter an invite code.',
     label: 'Invite code',
     placeholder: 'e.g. G-AG8p4FpnpAu83F_vJ1ND0aJ',
