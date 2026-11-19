@@ -6,28 +6,50 @@
     <title>打开 Studio 邀请链接</title>
     <style>
       :root {
-        color-scheme: light dark;
-        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+        color-scheme: light;
+        font-family:
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          sans-serif;
         --background: #f5f6f8;
         --card: #ffffff;
         --foreground: #1f2329;
         --muted: #6b7280;
+        --muted-bg: #f0f1f3;
         --border: #e5e7eb;
         --input: #d1d5db;
         --primary: #1677ff;
         --destructive-bg: #fff1f0;
         --destructive: #cf1322;
+        --shadow: rgba(0, 0, 0, 0.12);
+      }
+      :root[data-theme="dark"] {
+        color-scheme: dark;
+        --background: #14161a;
+        --card: #2b2f36;
+        --foreground: #f5f6f8;
+        --muted: #9ca3af;
+        --muted-bg: rgba(255, 255, 255, 0.08);
+        --border: #3f434b;
+        --input: #4b5563;
+        --destructive-bg: rgba(207, 19, 34, 0.12);
+        --destructive: #ff7875;
+        --shadow: rgba(0, 0, 0, 0.4);
       }
       @media (prefers-color-scheme: dark) {
-        :root {
+        :root:not([data-theme="light"]) {
+          color-scheme: dark;
           --background: #14161a;
           --card: #2b2f36;
           --foreground: #f5f6f8;
           --muted: #9ca3af;
+          --muted-bg: rgba(255, 255, 255, 0.08);
           --border: #3f434b;
           --input: #4b5563;
           --destructive-bg: rgba(207, 19, 34, 0.12);
           --destructive: #ff7875;
+          --shadow: rgba(0, 0, 0, 0.4);
         }
       }
       body {
@@ -39,6 +61,103 @@
         padding: 1rem;
         background: var(--background);
         color: var(--foreground);
+      }
+      /* The app's native language / theme choices stay reachable on this page. */
+      .toolbar {
+        position: fixed;
+        top: 0;
+        right: 0;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.75rem;
+      }
+      .menu {
+        position: relative;
+      }
+      .menu-trigger {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        height: 2rem;
+        padding: 0 0.5rem;
+        font: inherit;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        color: var(--muted);
+        background: transparent;
+        border: 1px solid transparent;
+        border-radius: 0.5rem;
+        cursor: pointer;
+      }
+      .menu-trigger:hover,
+      .menu-trigger[aria-expanded="true"] {
+        color: var(--foreground);
+        background: var(--muted-bg);
+      }
+      .menu-icon {
+        display: inline-flex;
+        width: 1rem;
+        height: 1rem;
+      }
+      .menu-icon[hidden] {
+        display: none;
+      }
+      .menu-icon svg {
+        width: 100%;
+        height: 100%;
+      }
+      .menu-value {
+        font-size: 0.75rem;
+        font-weight: 400;
+        color: var(--muted);
+      }
+      .menu-popup {
+        position: absolute;
+        top: calc(100% + 0.25rem);
+        right: 0;
+        display: grid;
+        gap: 0.125rem;
+        min-width: 9rem;
+        padding: 0.25rem;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        box-shadow: 0 8px 24px var(--shadow);
+      }
+      .menu-popup[hidden] {
+        display: none;
+      }
+      .menu-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        min-height: 2rem;
+        padding: 0 0.5rem;
+        font: inherit;
+        font-size: 0.875rem;
+        color: var(--foreground);
+        text-align: left;
+        background: transparent;
+        border: 0;
+        border-radius: 0.375rem;
+        cursor: pointer;
+      }
+      .menu-item:hover {
+        background: var(--muted-bg);
+      }
+      .menu-item[aria-checked="true"] {
+        font-weight: 500;
+        background: var(--muted-bg);
+      }
+      .menu-item::after {
+        content: "";
+        margin-left: auto;
+        width: 0.75rem;
+      }
+      .menu-item[aria-checked="true"]::after {
+        content: "\2713";
       }
       .card {
         width: 100%;
@@ -93,7 +212,7 @@
       input:focus {
         border-color: var(--primary);
       }
-      button {
+      button[type="submit"] {
         width: 100%;
         height: 2rem;
         font-size: 0.875rem;
@@ -104,7 +223,7 @@
         border-radius: 0.5rem;
         cursor: pointer;
       }
-      button:hover {
+      button[type="submit"]:hover {
         filter: brightness(0.94);
       }
       .message {
@@ -131,14 +250,185 @@
     </style>
   </head>
   <body>
+    <div class="toolbar">
+      <div class="menu" data-menu>
+        <button
+          id="language-trigger"
+          class="menu-trigger"
+          type="button"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-controls="language-menu"
+          data-menu-trigger
+          data-testid="language-trigger"
+        >
+          <span class="menu-icon" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="m5 8 6 6" />
+              <path d="m4 14 6-6 2-3" />
+              <path d="M2 5h12" />
+              <path d="M7 2h1" />
+              <path d="m22 22-5-10-5 10" />
+              <path d="M14 18h6" />
+            </svg>
+          </span>
+          <span data-i18n="language">语言</span>
+          <span class="menu-value" data-language-label>中文</span>
+        </button>
+        <div
+          id="language-menu"
+          class="menu-popup"
+          role="menu"
+          hidden
+          data-menu-popup
+        >
+          <button
+            class="menu-item"
+            type="button"
+            role="menuitemradio"
+            aria-checked="true"
+            data-locale="zh-CN"
+          >
+            中文
+          </button>
+          <button
+            class="menu-item"
+            type="button"
+            role="menuitemradio"
+            aria-checked="false"
+            data-locale="en-US"
+          >
+            English
+          </button>
+        </div>
+      </div>
+      <div class="menu" data-menu>
+        <button
+          id="theme-trigger"
+          class="menu-trigger"
+          type="button"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-controls="theme-menu"
+          data-menu-trigger
+          data-testid="theme-trigger"
+        >
+          <span
+            class="menu-icon"
+            aria-hidden="true"
+            data-theme-icon="light"
+            hidden
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="4" />
+              <path
+                d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+              />
+            </svg>
+          </span>
+          <span
+            class="menu-icon"
+            aria-hidden="true"
+            data-theme-icon="dark"
+            hidden
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </span>
+          <span
+            class="menu-icon"
+            aria-hidden="true"
+            data-theme-icon="system"
+            hidden
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect width="20" height="14" x="2" y="3" rx="2" />
+              <path d="M8 21h8M12 17v4" />
+            </svg>
+          </span>
+          <span data-i18n="theme">主题</span>
+          <span class="menu-value" data-theme-label>跟随系统</span>
+        </button>
+        <div
+          id="theme-menu"
+          class="menu-popup"
+          role="menu"
+          hidden
+          data-menu-popup
+        >
+          <button
+            class="menu-item"
+            type="button"
+            role="menuitemradio"
+            aria-checked="false"
+            data-theme-value="light"
+            data-i18n="light"
+          >
+            浅色
+          </button>
+          <button
+            class="menu-item"
+            type="button"
+            role="menuitemradio"
+            aria-checked="false"
+            data-theme-value="dark"
+            data-i18n="dark"
+          >
+            深色
+          </button>
+          <button
+            class="menu-item"
+            type="button"
+            role="menuitemradio"
+            aria-checked="true"
+            data-theme-value="system"
+            data-i18n="system"
+          >
+            跟随系统
+          </button>
+        </div>
+      </div>
+    </div>
+
     <div class="card">
       <header>
-        <h1>打开 Studio 邀请链接</h1>
-        <p class="description">输入 Studio 邀请码，程序会自动在浏览器中打开对应的邀请链接。</p>
+        <h1 data-i18n="title">打开 Studio 邀请链接</h1>
+        <p class="description" data-i18n="description">
+          输入 Studio 邀请码，程序会自动在浏览器中打开对应的邀请链接。
+        </p>
       </header>
       <form id="invite-form" novalidate>
         <div class="field">
-          <label for="code">邀请码</label>
+          <label for="code" data-i18n="label">邀请码</label>
           <input
             id="code"
             name="code"
@@ -146,44 +436,261 @@
             autocomplete="off"
             spellcheck="false"
             placeholder="例如：G-AG8p4FpnpAu83F_vJ1ND0aJ"
+            data-i18n-placeholder="placeholder"
             data-testid="code-input"
           />
         </div>
-        <p id="error" class="message error" role="alert" data-testid="error"></p>
+        <p
+          id="error"
+          class="message error"
+          role="alert"
+          data-testid="error"
+        ></p>
         <p id="success" class="message success" data-testid="success"></p>
-        <button type="submit" data-testid="submit-button">打开邀请链接</button>
+        <button type="submit" data-i18n="action" data-testid="submit-button">
+          打开邀请链接
+        </button>
       </form>
     </div>
 
     <script type="module">
-      import { buildInviteUrl, validateInviteCode } from './invite.js';
+      import { buildInviteUrl } from "./invite.js";
 
-      const form = document.getElementById('invite-form');
-      const input = document.getElementById('code');
-      const errorBox = document.getElementById('error');
-      const successBox = document.getElementById('success');
+      const COPY = {
+        "zh-CN": {
+          htmlLang: "zh-CN",
+          title: "打开 Studio 邀请链接",
+          description:
+            "输入 Studio 邀请码，程序会自动在浏览器中打开对应的邀请链接。",
+          label: "邀请码",
+          placeholder: "例如：G-AG8p4FpnpAu83F_vJ1ND0aJ",
+          action: "打开邀请链接",
+          empty: "请输入邀请码。",
+          opened: "已尝试打开链接：",
+          language: "语言",
+          theme: "主题",
+          light: "浅色",
+          dark: "深色",
+          system: "跟随系统",
+        },
+        "en-US": {
+          htmlLang: "en-US",
+          title: "Open a Studio invite link",
+          description:
+            "Enter a Studio invite code and its invitation link opens in this browser.",
+          label: "Invite code",
+          placeholder: "e.g. G-AG8p4FpnpAu83F_vJ1ND0aJ",
+          action: "Open invite link",
+          empty: "Please enter an invite code.",
+          opened: "Opened the invite link:",
+          language: "Language",
+          theme: "Theme",
+          light: "Light",
+          dark: "Dark",
+          system: "System",
+        },
+      };
+      const LOCALE_KEY = "hello-studio:locale";
+      const THEME_KEY = "hello-studio:theme";
+      const LOCALES = Object.keys(COPY);
+      const THEMES = ["light", "dark", "system"];
 
-      form.addEventListener('submit', (event) => {
+      function readPreference(key) {
+        try {
+          return localStorage.getItem(key);
+        } catch {
+          return null;
+        }
+      }
+
+      function writePreference(key, value) {
+        try {
+          localStorage.setItem(key, value);
+        } catch {
+          /* Keep the in-memory choice. */
+        }
+      }
+
+      let locale = LOCALES.includes(readPreference(LOCALE_KEY))
+        ? readPreference(LOCALE_KEY)
+        : "zh-CN";
+      let theme = THEMES.includes(readPreference(THEME_KEY))
+        ? readPreference(THEME_KEY)
+        : "system";
+      let errorKey = "";
+      let openedUrl = "";
+
+      const form = document.getElementById("invite-form");
+      const input = document.getElementById("code");
+      const errorBox = document.getElementById("error");
+      const successBox = document.getElementById("success");
+      const languageLabel = document.querySelector("[data-language-label]");
+      const themeLabel = document.querySelector("[data-theme-label]");
+
+      function renderMessage() {
+        errorBox.textContent = errorKey ? COPY[locale][errorKey] : "";
+        successBox.textContent = "";
+        if (!openedUrl) return;
+        const link = document.createElement("a");
+        link.href = openedUrl;
+        link.textContent = openedUrl;
+        link.rel = "noopener";
+        successBox.append(COPY[locale].opened, " ", link);
+      }
+
+      function applyLocale() {
+        const copy = COPY[locale];
+        document.documentElement.lang = copy.htmlLang;
+        document.title = copy.title;
+        document.querySelectorAll("[data-i18n]").forEach((node) => {
+          const key = node.dataset.i18n;
+          if (copy[key]) node.textContent = copy[key];
+        });
+        document.querySelectorAll("[data-i18n-placeholder]").forEach((node) => {
+          const key = node.dataset.i18nPlaceholder;
+          if (copy[key]) node.setAttribute("placeholder", copy[key]);
+        });
+        document.querySelectorAll("[data-locale]").forEach((item) => {
+          item.setAttribute(
+            "aria-checked",
+            String(item.dataset.locale === locale),
+          );
+        });
+        languageLabel.textContent = locale === "zh-CN" ? "中文" : "English";
+        themeLabel.textContent = copy[theme];
+        renderMessage();
+      }
+
+      function applyTheme() {
+        if (theme === "system") {
+          delete document.documentElement.dataset.theme;
+        } else {
+          document.documentElement.dataset.theme = theme;
+        }
+        document.querySelectorAll("[data-theme-value]").forEach((item) => {
+          item.setAttribute(
+            "aria-checked",
+            String(item.dataset.themeValue === theme),
+          );
+        });
+        document.querySelectorAll("[data-theme-icon]").forEach((icon) => {
+          icon.hidden = icon.dataset.themeIcon !== theme;
+        });
+        themeLabel.textContent = COPY[locale][theme];
+      }
+
+      function closeMenu(menu) {
+        const trigger = menu.querySelector("[data-menu-trigger]");
+        const popup = menu.querySelector("[data-menu-popup]");
+        popup.hidden = true;
+        trigger.setAttribute("aria-expanded", "false");
+      }
+
+      function closeMenus() {
+        document.querySelectorAll("[data-menu]").forEach(closeMenu);
+      }
+
+      function openMenu(menu) {
+        closeMenus();
+        const trigger = menu.querySelector("[data-menu-trigger]");
+        const popup = menu.querySelector("[data-menu-popup]");
+        popup.hidden = false;
+        trigger.setAttribute("aria-expanded", "true");
+        const checked = popup.querySelector('[aria-checked="true"]');
+        (checked ?? popup.querySelector(".menu-item"))?.focus();
+      }
+
+      function setupMenu(menu) {
+        const trigger = menu.querySelector("[data-menu-trigger]");
+        const popup = menu.querySelector("[data-menu-popup]");
+
+        trigger.addEventListener("click", () => {
+          if (popup.hidden) {
+            openMenu(menu);
+          } else {
+            closeMenu(menu);
+          }
+        });
+
+        popup.addEventListener("keydown", (event) => {
+          const items = [...popup.querySelectorAll(".menu-item")];
+          const index = items.indexOf(document.activeElement);
+
+          if (event.key === "ArrowDown") {
+            event.preventDefault();
+            items[(index + 1) % items.length]?.focus();
+          } else if (event.key === "ArrowUp") {
+            event.preventDefault();
+            items[(index - 1 + items.length) % items.length]?.focus();
+          } else if (event.key === "Escape") {
+            event.preventDefault();
+            closeMenu(menu);
+            trigger.focus();
+          } else if (event.key === "Tab") {
+            closeMenu(menu);
+          }
+        });
+
+        popup.addEventListener("click", (event) => {
+          const target =
+            event.target instanceof Element
+              ? event.target.closest(".menu-item")
+              : null;
+          if (!target) return;
+          const item = target;
+
+          if (item.dataset.locale) {
+            locale = item.dataset.locale;
+            writePreference(LOCALE_KEY, locale);
+            applyLocale();
+          } else if (item.dataset.themeValue) {
+            theme = item.dataset.themeValue;
+            writePreference(THEME_KEY, theme);
+            applyLocale();
+            applyTheme();
+          }
+
+          closeMenu(menu);
+          trigger.focus();
+        });
+      }
+
+      document.querySelectorAll("[data-menu]").forEach(setupMenu);
+
+      document.addEventListener("click", (event) => {
+        if (!(event.target instanceof Node)) return;
+        document.querySelectorAll("[data-menu]").forEach((menu) => {
+          if (!menu.contains(event.target)) closeMenu(menu);
+        });
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") closeMenus();
+      });
+
+      form.addEventListener("submit", (event) => {
         event.preventDefault();
-        errorBox.textContent = '';
-        successBox.textContent = '';
 
         const url = buildInviteUrl(input.value);
         if (url === null) {
           // Empty code: show a clear error and open nothing.
-          errorBox.textContent = validateInviteCode(input.value).message;
+          errorKey = "empty";
+          openedUrl = "";
+          renderMessage();
           return;
         }
 
+        errorKey = "";
+        renderMessage();
+
         // Non-empty code: open the invite link in this same window/tab.
         window.location.href = url;
-
-        const link = document.createElement('a');
-        link.href = url;
-        link.textContent = url;
-        link.rel = 'noopener';
-        successBox.append('已尝试打开链接：', link);
+        openedUrl = url;
+        renderMessage();
       });
+
+      applyLocale();
+      applyTheme();
     </script>
   </body>
 </html>
