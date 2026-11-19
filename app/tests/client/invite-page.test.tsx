@@ -41,8 +41,7 @@ const copy = {
     },
     invite: {
       action: 'Open invite link',
-      description:
-        'Enter a Studio invite code and its invitation link opens in your browser.',
+      description: 'Enter a Studio invite code and use it now.',
       errorRequired: 'Please enter an invite code.',
       label: 'Invite code',
       placeholder: 'e.g. G-AG8p4FpnpAu83F_vJ1ND0aJ',
@@ -68,8 +67,7 @@ const copy = {
     },
     invite: {
       action: '打开邀请链接',
-      description:
-        '输入 Studio 邀请码，程序会自动在浏览器中打开对应的邀请链接。',
+      description: '输入 Studio 邀请码，即刻使用智搭。',
       errorRequired: '请输入邀请码。',
       label: '邀请码',
       placeholder: '例如：G-AG8p4FpnpAu83F_vJ1ND0aJ',

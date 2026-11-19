@@ -9,7 +9,7 @@ const zhCN: AppResource = {
   navigation: { ...systemZhCN.navigation, invite: '打开邀请链接' },
   invite: {
     action: '打开邀请链接',
-    description: '输入 Studio 邀请码，程序会自动在浏览器中打开对应的邀请链接。',
+    description: '输入 Studio 邀请码，即刻使用智搭。',
     errorRequired: '请输入邀请码。',
     label: '邀请码',
     placeholder: '例如：G-AG8p4FpnpAu83F_vJ1ND0aJ',
