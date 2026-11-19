@@ -6,7 +6,6 @@ const zhCN: AppResource = {
   // The template's own copy; see `./en-US.ts`.
   ...systemZhCN,
   ...fileUi,
-  navigation: { ...systemZhCN.navigation, invite: '打开邀请链接' },
   invite: {
     action: '打开邀请链接',
     description: '输入 Studio 邀请码，即刻使用智搭。',

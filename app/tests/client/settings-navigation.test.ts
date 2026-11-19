@@ -90,15 +90,11 @@ describe('System settings navigation', () => {
     expect(find(routes, 'settingsUsers').id).toBe(`${app}:settingsUsers`);
   });
 
-  it('shows one sidebar entry that opens the home and stays selected on every settings page', () => {
+  it('lists no settings menu entry while keeping the settings home cards', () => {
     const routes = resolve();
     const menu = buildRouteNavigation(routes, new Set());
-    expect(menu.map(({ route }) => [route.name, route.path])).toEqual([
-      ['settingsHome', '/settings'],
-    ]);
-    expect(menu[0].children).toEqual([]);
-    expect(menu[0].route.navigation?.title).toBe('settings.title');
-    const entry = routeKey(menu[0].route);
+    // This application shows the invitation page as its only entry; administrators open Settings by address.
+    expect(menu).toEqual([]);
     for (const path of [
       '/settings',
       '/settings/users',
@@ -106,7 +102,7 @@ describe('System settings navigation', () => {
       '/settings/roles/member/edit',
       '/settings/default-access',
     ])
-      expect(selectedNavigationId(routes, path)).toBe(entry);
+      expect(selectedNavigationId(routes, path)).toBeUndefined();
   });
 
   it('groups modules into categories, opens a tabbed module on its first readable tab and hides empty categories', () => {
@@ -173,10 +169,10 @@ describe('System settings navigation', () => {
       'settingsSystem',
       [['notificationManagement', '/settings/notifications/logs']],
     ]);
-    expect(buildRouteNavigation(routes, new Set())).toHaveLength(1);
-    expect(selectedNavigationId(routes, '/settings/notifications/logs')).toBe(
-      routeKey(buildRouteNavigation(routes, new Set())[0].route),
-    );
+    expect(buildRouteNavigation(routes, new Set())).toEqual([]);
+    expect(
+      selectedNavigationId(routes, '/settings/notifications/logs'),
+    ).toBeUndefined();
   });
 
   it('places a plugin module registered outside the categories under System', () => {
@@ -190,7 +186,7 @@ describe('System settings navigation', () => {
     ]).routes;
     // The bare shell: only App Foundation, which only an unrestricted administrator may open.
     const menu = buildRouteNavigation(routes, new Set());
-    expect(menu.map(({ route }) => route.name)).toEqual(['settingsHome']);
+    expect(menu).toEqual([]);
     expect(catalog(routes)).toEqual([
       ['settingsSystem', [['foundation', '/foundation']]],
     ]);
@@ -228,7 +224,7 @@ describe('System settings navigation', () => {
     ]);
     expect(
       buildRouteNavigation(routes, new Set()).map(({ route }) => route.name),
-    ).toEqual(['home', 'invite', 'settingsHome']);
+    ).toEqual([]);
   });
 });
 

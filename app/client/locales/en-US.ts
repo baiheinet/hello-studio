@@ -8,7 +8,6 @@ const enUS = {
   // `./system/` so a template upgrade can replace it without touching the application's copy below.
   ...systemEnUS,
   ...fileUi,
-  navigation: { ...systemEnUS.navigation, invite: 'Open invite link' },
   invite: {
     action: 'Open invite link',
     description: 'Enter a Studio invite code and use it now.',

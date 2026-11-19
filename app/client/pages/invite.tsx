@@ -10,12 +10,10 @@ import { LanguageMenu } from '../layouts/components/language-switcher.js';
 import { ThemeMenu } from '../theme/index.js';
 
 /**
- * `/invite`: a standalone page that turns an invite code into a Studio
- * invitation link. It is `auth: 'optional'` so the tool is usable from the
- * preview without signing in, and it stays outside the shell: the centered
- * card follows the user invitation page's layout. Because that leaves no
- * account menu, the app's native language and theme choices keep their own
- * buttons in the page header.
+ * `/`: the application's public entry point, a standalone page that turns an invite code into a Studio invitation
+ * link. It is `auth: 'optional'` so the tool is usable from the preview without signing in, and it stays outside the
+ * shell: the centered card follows the user invitation page's layout. Because that leaves no account menu, the app's
+ * native language and theme choices keep their own buttons in the page header.
  */
 export default function InvitePage(): ReactElement {
   const { t } = useTranslation();

@@ -36,9 +36,10 @@ const clientPlugins: AppClientPlugins = defineClientPlugins([
   file(),
   scheduler(),
   mail(),
-  // The manifest is what the capability guide lists: every plugin this application declares.
+  // The manifest is what the capability guide lists: every plugin this application declares. The application owns
+  // the System settings group, so Foundation joins it through navigation grouping instead of adding a group of its
+  // own: such a group is registered at `/`, which would shadow the invitation page at the application root.
   foundation({
-    settingsGroup: true,
     manifest: applicationManifest,
     guideSettingsPath: '/settings',
     navigation: false,
