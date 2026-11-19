@@ -228,7 +228,7 @@ describe('System settings navigation', () => {
     ]);
     expect(
       buildRouteNavigation(routes, new Set()).map(({ route }) => route.name),
-    ).toEqual(['home', 'settingsHome']);
+    ).toEqual(['home', 'invite', 'settingsHome']);
   });
 });
 

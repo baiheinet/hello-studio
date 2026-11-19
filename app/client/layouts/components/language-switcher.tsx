@@ -4,12 +4,16 @@ import { useTranslation } from '@nocobase/i18n/client';
 import { Languages } from 'lucide-react';
 import type { ReactElement } from 'react';
 
+import { Button } from '#components/ui/button';
 import {
+  DropdownMenu,
+  DropdownMenuContent,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
 } from '#components/ui/dropdown-menu';
 import { cn } from 'cn';
 
@@ -17,10 +21,11 @@ export interface LanguageSwitcherProps {
   readonly className?: string;
 }
 
-/** Account-menu language choices; the plugin owns persistence and resource loading. */
-export function LanguageSwitcher({
-  className,
-}: LanguageSwitcherProps): ReactElement | null {
+/**
+ * The language choices themselves. Pages outside the account menu (the
+ * public invite page) show them in their own menu button.
+ */
+function LanguageChoices(): ReactElement {
   const { locale, locales, setLocale, switching } = useAppLocale();
   const { t } = useTranslation();
   const toaster = useToaster();
@@ -55,6 +60,38 @@ export function LanguageSwitcher({
     });
   }
 
+  return (
+    <DropdownMenuRadioGroup value={locale} onValueChange={handleLocaleChange}>
+      {locales.map((definition) => (
+        <DropdownMenuRadioItem
+          closeOnClick
+          key={definition.locale}
+          value={definition.locale}
+          disabled={switching}
+        >
+          {definition.label}
+        </DropdownMenuRadioItem>
+      ))}
+    </DropdownMenuRadioGroup>
+  );
+}
+
+function currentLocaleLabel(
+  locales: readonly { locale: string; label: string }[],
+  locale: string,
+): string {
+  return (
+    locales.find((definition) => definition.locale === locale)?.label ?? locale
+  );
+}
+
+/** Account-menu language choices; the plugin owns persistence and resource loading. */
+export function LanguageSwitcher({
+  className,
+}: LanguageSwitcherProps): ReactElement | null {
+  const { locale, locales, switching } = useAppLocale();
+  const { t } = useTranslation();
+
   // With one language there is nothing to choose.
   if (locales.length < 2) return null;
 
@@ -69,27 +106,48 @@ export function LanguageSwitcher({
           {t('actions.language', { defaultValue: 'Language' })}
         </span>
         <span className='text-muted-foreground'>
-          {locales.find((definition) => definition.locale === locale)?.label ??
-            locale}
+          {currentLocaleLabel(locales, locale)}
         </span>
       </DropdownMenuSubTrigger>
       <DropdownMenuSubContent>
-        <DropdownMenuRadioGroup
-          value={locale}
-          onValueChange={handleLocaleChange}
-        >
-          {locales.map((definition) => (
-            <DropdownMenuRadioItem
-              closeOnClick
-              key={definition.locale}
-              value={definition.locale}
-              disabled={switching}
-            >
-              {definition.label}
-            </DropdownMenuRadioItem>
-          ))}
-        </DropdownMenuRadioGroup>
+        <LanguageChoices />
       </DropdownMenuSubContent>
     </DropdownMenuSub>
+  );
+}
+
+/**
+ * The same choices as a top-level button. The invite page renders outside the
+ * application shell, so the account menu is not available there; showing the
+ * native choices keeps the language control reachable on that page too.
+ */
+export function LanguageMenu(): ReactElement | null {
+  const { locale, locales, switching } = useAppLocale();
+  const { t } = useTranslation();
+
+  if (locales.length < 2) return null;
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            className='gap-2'
+            disabled={switching}
+            size='sm'
+            variant='ghost'
+          />
+        }
+      >
+        <Languages aria-hidden='true' className='size-4' />
+        <span>{t('actions.language', { defaultValue: 'Language' })}</span>
+        <span className='text-muted-foreground'>
+          {currentLocaleLabel(locales, locale)}
+        </span>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align='end' className='w-44'>
+        <LanguageChoices />
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

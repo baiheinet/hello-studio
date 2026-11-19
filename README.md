@@ -35,6 +35,11 @@ Open <http://localhost:3000/>, type an invite code and press **打开邀请链�
 Any non-empty code navigates the browser to the invitation link in this same
 tab. When the input is empty, an error is shown and no link is opened.
 
+The page keeps language and theme choices in its top-right corner: switch
+between Chinese and English, and choose the light, dark or system theme. The
+in-app invite page (`app/client/pages/invite.tsx`) shows the same choices
+through the application's own language and theme menus.
+
 ### Command line
 
 The same behaviour is available as a CLI:
