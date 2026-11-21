@@ -7,7 +7,7 @@ import { Label } from '#components/ui/label';
 import { buildInviteUrl } from '#lib/invite-code';
 
 import { LanguageMenu } from '../layouts/components/language-switcher.js';
-import { ThemeMenu } from '../theme/index.js';
+import { ThemeSettingsMenu } from '../theme/index.js';
 
 /**
  * `/`: the application's public entry point, a standalone page that turns an invite code into a Studio invitation
@@ -42,7 +42,7 @@ export default function InvitePage(): ReactElement {
     <div className='flex min-h-svh flex-col'>
       <header className='flex shrink-0 items-center justify-end gap-1 p-3'>
         <LanguageMenu />
-        <ThemeMenu />
+        <ThemeSettingsMenu />
       </header>
       <main className='flex flex-1 items-center justify-center p-4'>
         <div className='w-full max-w-sm space-y-6 rounded-xl border bg-card p-6 text-card-foreground shadow-sm'>

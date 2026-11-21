@@ -188,17 +188,33 @@ describe('invite page', () => {
     );
   });
 
-  it('switches the color mode from the header', async () => {
+  it('switches the color mode from the header preview menu', async () => {
     const { app, runtime } = await createRuntime(['en-US', 'zh-CN']);
     const user = userEvent.setup();
 
     renderInvite(app, runtime);
     await user.click(screen.getByRole('button', { name: 'Theme' }));
-    await user.click(
-      await screen.findByRole('menuitemradio', { name: 'Dark' }),
-    );
+    await user.click(await screen.findByRole('radio', { name: 'Dark' }));
 
     await waitFor(() => expect(document.documentElement).toHaveClass('dark'));
+  });
+
+  it('shows NocoReach style theme preview cards in the header menu', async () => {
+    const { app, runtime } = await createRuntime(['en-US', 'zh-CN']);
+    const user = userEvent.setup();
+
+    renderInvite(app, runtime);
+    await user.click(screen.getByRole('button', { name: 'Theme' }));
+
+    const previews = document.querySelectorAll('.theme-preview[data-theme]');
+    expect(previews).toHaveLength(2);
+    expect(
+      [...previews].map((preview) => preview.getAttribute('data-theme')),
+    ).toEqual(['compact', 'default']);
+    await user.click(screen.getByRole('radio', { name: 'Default' }));
+    await waitFor(() =>
+      expect(document.documentElement).toHaveAttribute('data-theme', 'default'),
+    );
   });
 
   it('reports an empty code and opens nothing', async () => {
